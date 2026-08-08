@@ -72,7 +72,7 @@ export default function EnvelopeLanding() {
           Scaled with inset padding so it neatly frames the screen.
           ═══════════════════════════════════════════ */}
       <div
-        className="absolute inset-2 sm:inset-4 md:inset-6 pointer-events-none overflow-hidden"
+        className="absolute inset-0 pointer-events-none overflow-hidden"
         style={{ zIndex: 1 }}
         aria-hidden="true"
       >
