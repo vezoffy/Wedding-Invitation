@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%" fill="none" stroke="#D4AF37" stroke-width="2">
+  <!-- Outer Floral Scroll -->
+  <path d="M 10 190 L 10 50 C 10 20 20 10 50 10 L 190 10" />
+  <path d="M 20 180 L 20 55 C 20 30 30 20 55 20 L 180 20" stroke-width="1"/>
+  <!-- Decorative Corner Swirl -->
+  <path d="M 30 30 C 50 10 70 30 50 50 C 30 70 10 50 30 30 Z" fill="#D4AF37" opacity="0.15"/>
+  <circle cx="40" cy="40" r="5" fill="#D4AF37"/>
+  <!-- Small Accent Leaf Dots -->
+  <circle cx="70" cy="15" r="3" fill="#D4AF37"/>
+  <circle cx="85" cy="15" r="2" fill="#D4AF37"/>
+  <circle cx="15" cy="70" r="3" fill="#D4AF37"/>
+  <circle cx="15" cy="85" r="2" fill="#D4AF37"/>
+</svg>
