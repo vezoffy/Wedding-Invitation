@@ -27,7 +27,7 @@ import flowerGold from '../assets/flower-gold.svg';
 const PARTICLE_ASSETS = [leafMaroon, leafGold, flowerMaroon, flowerGold];
 
 // Number of concurrent particles. Kept modest for mobile performance.
-const PARTICLE_COUNT = 14;
+const PARTICLE_COUNT = 50;
 
 /**
  * Pre-generate particle configs once so they remain stable across re-renders.
@@ -36,9 +36,9 @@ const PARTICLE_COUNT = 14;
 function generateParticles(count) {
   return Array.from({ length: count }, (_, i) => {
     const asset = PARTICLE_ASSETS[i % PARTICLE_ASSETS.length];
-    const size = 18 + Math.random() * 22;             // 18–40px
+    const size = 16 + Math.random() * 24;             // 16–40px
     const left = Math.random() * 100;                  // 0–100% horizontal
-    const duration = 8 + Math.random() * 10;           // 8–18s fall time
+    const duration = 6 + Math.random() * 10;           // 6–16s fall time
     const delay = -(Math.random() * duration);         // Negative delay → staggered start (already mid-fall)
     const driftX = -30 + Math.random() * 60;           // ±30px horizontal sway
     const startRotation = Math.random() * 360;         // Random initial angle
