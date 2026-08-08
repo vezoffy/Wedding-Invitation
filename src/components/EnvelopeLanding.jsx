@@ -5,6 +5,7 @@ import SealButton from './SealButton';
 import EnvelopeFlap from './EnvelopeFlap';
 import SparkleEffect from './SparkleEffect';
 import InvitationCard from './InvitationCard';
+import FallingParticles from './FallingParticles';
 
 // --- ASSET IMPORT ---
 // Replace this with your own SVG path if needed
@@ -18,6 +19,9 @@ import envelopeBodySvg from '../assets/envelope-closed.svg';
  *   "opening"       → Seal fades, flap flips open (3D), sparkle burst fires
  *   "transitioning" → Envelope slides down off screen
  *   "revealed"      → Invitation card fades in
+ *
+ * The FallingParticles component runs continuously across ALL states,
+ * providing an always-on atmospheric background of falling leaves and flowers.
  */
 
 /* ─── Animation Timing Constants ─── */
@@ -67,38 +71,11 @@ export default function EnvelopeLanding() {
       />
 
       {/* ═══════════════════════════════════════════
-          Ambient floating particles (decorative)
+          Continuous Falling Particles (Always On)
+          Renders behind all foreground elements (z-index: 1).
+          Shows leaves and flowers drifting down continuously.
           ═══════════════════════════════════════════ */}
-      {state !== 'revealed' && (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {[...Array(6)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute rounded-full"
-              style={{
-                width: 4 + Math.random() * 6,
-                height: 4 + Math.random() * 6,
-                background: i % 2 === 0
-                  ? 'rgba(212,175,55,0.3)'
-                  : 'rgba(139,0,0,0.15)',
-                left: `${10 + Math.random() * 80}%`,
-                top: `${10 + Math.random() * 80}%`,
-              }}
-              animate={{
-                y: [0, -30, 0],
-                x: [0, (i % 2 === 0 ? 15 : -15), 0],
-                opacity: [0.2, 0.5, 0.2],
-              }}
-              transition={{
-                duration: 4 + Math.random() * 3,
-                repeat: Infinity,
-                delay: i * 0.7,
-                ease: 'easeInOut',
-              }}
-            />
-          ))}
-        </div>
-      )}
+      <FallingParticles />
 
       {/* ═══════════════════════════════════════════
           Envelope Assembly (States: sealed, opening, transitioning)
@@ -108,6 +85,7 @@ export default function EnvelopeLanding() {
           <motion.div
             key="envelope-assembly"
             className="absolute inset-0 flex flex-col items-center justify-center"
+            style={{ zIndex: 10 }}
             // Exit animation: slide down off screen
             exit={{
               y: '120vh',
