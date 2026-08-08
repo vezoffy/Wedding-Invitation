@@ -16,12 +16,8 @@ import grandBorderSvg from '../assets/Detailed-Grand-Border.svg';
 /**
  * EnvelopeLanding — Main orchestrator component for the wedding invitation landing page.
  *
- * Sequence Flow & Layer Architecture:
- *   Layer 0: Soft Cream Gradient Background (#FDFBF7 to #F4EFE6)
- *   Layer 1: Detailed-Grand-Border.svg (Viewport framing border, always-on, pointer-events-none)
- *   Layer 2: Continuous Falling Particles System (Leaves & Flowers falling vertically with rotation & drift)
- *   Layer 10: Envelope Assembly (Sealed → 3D Flap Rotate → Sparkle Burst → Slide Down Exit)
- *   Layer 30: Revealed Invitation Card (Fades in with corner borders, Ganesh motif, & wedding details)
+ * Scaled & proportioned so all elements (Grand Border, Envelope, Particles, & Card)
+ * fit comfortably inside the viewport across mobile and desktop devices.
  */
 
 /* ─── Animation Timing Constants ─── */
@@ -73,10 +69,10 @@ export default function EnvelopeLanding() {
       {/* ═══════════════════════════════════════════
           LAYER 1: Detailed Grand Border (Always On)
           Mapped SVG: Detailed-Grand-Border.svg
-          Covers the viewport, sits behind elements, non-interactive.
+          Scaled with inset padding so it neatly frames the screen.
           ═══════════════════════════════════════════ */}
       <div
-        className="absolute inset-0 pointer-events-none overflow-hidden"
+        className="absolute inset-2 sm:inset-4 md:inset-6 pointer-events-none overflow-hidden"
         style={{ zIndex: 1 }}
         aria-hidden="true"
       >
@@ -91,18 +87,18 @@ export default function EnvelopeLanding() {
       {/* ═══════════════════════════════════════════
           LAYER 2: Continuous Falling Particles (Always On)
           Renders above grand border but behind envelope (zIndex: 2).
-          Continuously drops leaf and flower SVGs with drift & rotation.
           ═══════════════════════════════════════════ */}
       <FallingParticles />
 
       {/* ═══════════════════════════════════════════
           LAYER 10: Envelope Assembly (States: sealed, opening, transitioning)
+          Scaled to fit easily within the grand border framing.
           ═══════════════════════════════════════════ */}
       <AnimatePresence>
         {state !== 'revealed' && (
           <motion.div
             key="envelope-assembly"
-            className="absolute inset-0 flex flex-col items-center justify-center"
+            className="absolute inset-0 flex flex-col items-center justify-center p-4"
             style={{ zIndex: 10 }}
             // Exit transition: smooth slide down off bottom of screen
             exit={{
@@ -114,12 +110,12 @@ export default function EnvelopeLanding() {
               },
             }}
           >
-            {/* — Envelope Container — */}
+            {/* — Scaled Envelope Container — */}
             <div
               className="relative"
               style={{
-                width: 'min(80vw, 400px)',
-                height: 'min(60vw, 300px)',
+                width: 'min(72vw, 320px)',
+                height: 'min(54vw, 240px)',
               }}
             >
               {/* Envelope Body (Mapped SVG: Envelope Closed.svg) */}
@@ -165,11 +161,11 @@ export default function EnvelopeLanding() {
               {state === 'sealed' && (
                 <motion.p
                   key="instruction-text"
-                  className="mt-8 sm:mt-10 text-center animate-gentle-pulse select-none"
+                  className="mt-6 sm:mt-8 text-center animate-gentle-pulse select-none"
                   style={{
                     fontFamily: 'var(--font-serif)',
                     color: 'var(--color-maroon)',
-                    fontSize: 'clamp(0.85rem, 2.5vw, 1.1rem)',
+                    fontSize: 'clamp(0.8rem, 2.2vw, 1.0rem)',
                     letterSpacing: '0.08em',
                   }}
                   initial={{ opacity: 0, y: 10 }}
