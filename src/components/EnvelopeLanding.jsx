@@ -7,28 +7,28 @@ import SparkleEffect from './SparkleEffect';
 import InvitationCard from './InvitationCard';
 import FallingParticles from './FallingParticles';
 
-// --- ASSET IMPORT ---
-// Replace this with your own SVG path if needed
+// ============================================================================
+// SVG ASSET MAP: Replace these import paths with your local SVG files
+// ============================================================================
 import envelopeBodySvg from '../assets/envelope-closed.svg';
+import grandBorderSvg from '../assets/Detailed-Grand-Border.svg';
 
 /**
- * EnvelopeLanding — The main orchestrator for the 4-state animation sequence.
+ * EnvelopeLanding — Main orchestrator component for the wedding invitation landing page.
  *
- * States:
- *   "sealed"        → Envelope + seal visible, pulsing instruction text
- *   "opening"       → Seal fades, flap flips open (3D), sparkle burst fires
- *   "transitioning" → Envelope slides down off screen
- *   "revealed"      → Invitation card fades in
- *
- * The FallingParticles component runs continuously across ALL states,
- * providing an always-on atmospheric background of falling leaves and flowers.
+ * Sequence Flow & Layer Architecture:
+ *   Layer 0: Soft Cream Gradient Background (#FDFBF7 to #F4EFE6)
+ *   Layer 1: Detailed-Grand-Border.svg (Viewport framing border, always-on, pointer-events-none)
+ *   Layer 2: Continuous Falling Particles System (Leaves & Flowers falling vertically with rotation & drift)
+ *   Layer 10: Envelope Assembly (Sealed → 3D Flap Rotate → Sparkle Burst → Slide Down Exit)
+ *   Layer 30: Revealed Invitation Card (Fades in with corner borders, Ganesh motif, & wedding details)
  */
 
 /* ─── Animation Timing Constants ─── */
 const TIMING = {
-  SEAL_FADE_MS: 300,         // How long the seal takes to fade out
-  FLAP_OPEN_DELAY_MS: 200,   // Delay before flap starts opening
-  SPARKLE_DELAY_MS: 400,     // Delay before sparkle burst fires
+  SEAL_FADE_MS: 300,            // How long the seal takes to fade out
+  FLAP_OPEN_DELAY_MS: 200,      // Delay before flap starts opening
+  SPARKLE_DELAY_MS: 400,        // Delay before sparkle burst fires
   ENVELOPE_EXIT_DELAY_MS: 1400, // When envelope starts sliding off
   CARD_REVEAL_DELAY_MS: 1800,   // When invitation card begins fading in
 };
@@ -39,29 +39,29 @@ export default function EnvelopeLanding() {
 
   /**
    * Triggered when the user taps the wax seal.
-   * Kicks off the chain of timed state transitions.
+   * Stops seal pulse immediately and kicks off the multi-step opening sequence.
    */
   const handleOpen = useCallback(() => {
     if (state !== 'sealed') return;
 
-    // 1. Start the opening animation
+    // 1. Trigger opening state (seal fades, 3D flap flips 180°, sparkle bursts)
     setState('opening');
 
-    // 2. After sparkle + flap finish, slide envelope away
+    // 2. Slide envelope down off-screen
     setTimeout(() => {
       setState('transitioning');
     }, TIMING.ENVELOPE_EXIT_DELAY_MS);
 
-    // 3. After envelope exits, reveal the card
+    // 3. Reveal the main invitation card
     setTimeout(() => {
       setState('revealed');
     }, TIMING.CARD_REVEAL_DELAY_MS);
   }, [state]);
 
   return (
-    <div className="relative w-full h-full overflow-hidden">
+    <div className="relative w-full h-full overflow-hidden select-none">
       {/* ═══════════════════════════════════════════
-          Background — Soft cream gradient
+          LAYER 0: Base Background Gradient
           ═══════════════════════════════════════════ */}
       <div
         className="absolute inset-0"
@@ -71,14 +71,32 @@ export default function EnvelopeLanding() {
       />
 
       {/* ═══════════════════════════════════════════
-          Continuous Falling Particles (Always On)
-          Renders behind all foreground elements (z-index: 1).
-          Shows leaves and flowers drifting down continuously.
+          LAYER 1: Detailed Grand Border (Always On)
+          Mapped SVG: Detailed-Grand-Border.svg
+          Covers the viewport, sits behind elements, non-interactive.
+          ═══════════════════════════════════════════ */}
+      <div
+        className="absolute inset-0 pointer-events-none overflow-hidden"
+        style={{ zIndex: 1 }}
+        aria-hidden="true"
+      >
+        <img
+          src={grandBorderSvg}
+          alt="Detailed Grand Frame Border"
+          className="w-full h-full object-fill opacity-90"
+          draggable={false}
+        />
+      </div>
+
+      {/* ═══════════════════════════════════════════
+          LAYER 2: Continuous Falling Particles (Always On)
+          Renders above grand border but behind envelope (zIndex: 2).
+          Continuously drops leaf and flower SVGs with drift & rotation.
           ═══════════════════════════════════════════ */}
       <FallingParticles />
 
       {/* ═══════════════════════════════════════════
-          Envelope Assembly (States: sealed, opening, transitioning)
+          LAYER 10: Envelope Assembly (States: sealed, opening, transitioning)
           ═══════════════════════════════════════════ */}
       <AnimatePresence>
         {state !== 'revealed' && (
@@ -86,12 +104,12 @@ export default function EnvelopeLanding() {
             key="envelope-assembly"
             className="absolute inset-0 flex flex-col items-center justify-center"
             style={{ zIndex: 10 }}
-            // Exit animation: slide down off screen
+            // Exit transition: smooth slide down off bottom of screen
             exit={{
               y: '120vh',
               opacity: 0,
               transition: {
-                duration: 0.7,
+                duration: 0.75,
                 ease: [0.55, 0, 1, 0.45],
               },
             }}
@@ -104,21 +122,21 @@ export default function EnvelopeLanding() {
                 height: 'min(60vw, 300px)',
               }}
             >
-              {/* Envelope Body (without top flap) */}
+              {/* Envelope Body (Mapped SVG: Envelope Closed.svg) */}
               <img
                 src={envelopeBodySvg}
-                alt="Invitation envelope"
+                alt="Closed Invitation Envelope"
                 className="absolute inset-0 w-full h-full"
                 draggable={false}
               />
 
-              {/* Envelope Top Flap (separate layer for 3D animation) */}
+              {/* Envelope Top Flap (Separate SVG layer for 3D rotateX transform) */}
               <EnvelopeFlap isOpen={state === 'opening' || state === 'transitioning'} />
 
-              {/* Sparkle / Confetti Burst */}
+              {/* Sparkle / Confetti Burst (Mapped SVG: Sparkle Envelope.svg) */}
               <SparkleEffect isActive={state === 'opening' || state === 'transitioning'} />
 
-              {/* Wax Seal (centered on envelope) */}
+              {/* Maroon Wax Seal (Mapped SVG: Envelope Seal.svg) */}
               <AnimatePresence>
                 {state === 'sealed' && (
                   <motion.div
@@ -142,7 +160,7 @@ export default function EnvelopeLanding() {
               </AnimatePresence>
             </div>
 
-            {/* — Instruction Text — */}
+            {/* — Instructional Text — */}
             <AnimatePresence>
               {state === 'sealed' && (
                 <motion.p
@@ -172,7 +190,7 @@ export default function EnvelopeLanding() {
       </AnimatePresence>
 
       {/* ═══════════════════════════════════════════
-          Invitation Card (State: revealed)
+          LAYER 30: Revealed Invitation Card
           ═══════════════════════════════════════════ */}
       <AnimatePresence>
         {state === 'revealed' && (
